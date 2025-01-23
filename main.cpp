@@ -1,24 +1,15 @@
 #include <SDL2/SDL.h>
+#include <SDL_video.h>
+
 #include <iostream>
 
-using namespace std;
+bool init();
+bool loadmedia();
+void close();
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-
-int main(int argc, char *args[]) {
-  cout << "Starting.." << endl;
-  // The rendering window
-  SDL_Window *window = NULL;
-
-  // The surfaced contained by the window
-  SDL_Surface *screenSurface = NULL;
-
-  // Init SDL
-  if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    cout << "SDL count not be initialized" << SDL_GetError() << endl;
-  else
-    cout << "SDL Initialized" << endl;
-
+int main(int argc, char* args[]) {
+  SDL_Window* gWindow = NULL;
+  SDL_Surface* gScreenSurface = NULL;
+  SDL_Surface* imageSurface = NULL;
   return EXIT_SUCCESS;
 }
