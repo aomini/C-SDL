@@ -1,8 +1,8 @@
 [
 {
   "directory": "/Users/reyshrestha/projects/sdl-projects",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/opt/homebrew/Cellar/sdl2/2.30.11/include -isystem /opt/homebrew/Cellar/sdl2/2.30.11/include/SDL2 -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/sdlProject.dir/main.cpp.o -c /Users/reyshrestha/projects/sdl-projects/main.cpp",
-  "file": "/Users/reyshrestha/projects/sdl-projects/main.cpp",
-  "output": "CMakeFiles/sdlProject.dir/main.cpp.o"
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/opt/homebrew/Cellar/sdl2/2.30.11/include -isystem /opt/homebrew/Cellar/sdl2/2.30.11/include/SDL2 -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/sdlProject.dir/eventDriven.cpp.o -c /Users/reyshrestha/projects/sdl-projects/eventDriven.cpp",
+  "file": "/Users/reyshrestha/projects/sdl-projects/eventDriven.cpp",
+  "output": "CMakeFiles/sdlProject.dir/eventDriven.cpp.o"
 }
 ]
