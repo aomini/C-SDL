@@ -43,7 +43,7 @@ bool init() {
   return success;
 }
 
-/* SDL_Surface* loadSurface(string path) {
+SDL_Surface* loadSurface(string path) {
   SDL_Surface* optimizedSurface = NULL;
 
   SDL_Surface* loadedSurface = IMG_Load(path.c_str());
@@ -60,7 +60,7 @@ bool init() {
   }
   return optimizedSurface;
 }
-*/
+
 void close() {
   SDL_FreeSurface(gScreenSurface);
   gScreenSurface = NULL;
@@ -87,8 +87,8 @@ int main() {
   if (!init()) {
     cout << "SDL could not be initialized" << endl;
   } else {
-    /* SDL_BlitSurface(loadSurface("assets/signature.png"), NULL,
-       gScreenSurface, NULL); */
+    SDL_BlitSurface(loadSurface("assets/signature.png"), NULL, gScreenSurface,
+                    NULL);
     // loadSurface("assets/signature.png");
     SDL_UpdateWindowSurface(gWindow);
     keepWindowOpen();
