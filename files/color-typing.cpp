@@ -10,14 +10,94 @@ using namespace std;
 
 const int SCREEN_WIDTH = 680;
 const int SCREEN_HEIGHT = 540;
-
 SDL_Window* gWindow = NULL;
 SDL_Renderer* renderer = NULL;
-SDL_Texture* currentTexture = NULL;
 
-bool init();
-SDL_Texture* loadTexture(string path);
-bool loadMedia();
+class LTexture {
+ public:
+  // intialize Variables
+  LTexture();
+
+  ~LTexture();
+
+  bool loadFromFile(string path);
+
+  // Deallocate texture
+  void free();
+
+  void render(int x, int y);
+
+  // Get Dimension
+  int getWidth();
+  int getHeight();
+
+ private:
+  // The actual hardware texture
+  SDL_Texture* mTexture;
+
+  // Dimensions
+  int mWidth;
+  int mHeight;
+};
+
+LTexture::LTexture() {
+  // init
+  mTexture = nullptr;
+  mWidth = 0;
+  mHeight = 0;
+}
+
+LTexture::~LTexture() { free(); }
+
+bool LTexture::loadFromFile(string path) {
+  // Get Rid of preexisting texture
+  free();
+
+  SDL_Texture* finalTexture = nullptr;
+  SDL_Surface* loadedSurface = IMG_Load(path.c_str());
+  if (loadedSurface == nullptr) {
+    cout << "Unable to load image! SDL_Error " << SDL_GetError() << endl;
+    return false;
+  } else {
+    // color key image
+    SDL_SetColorKey(loadedSurface, SDL_TRUE,
+                    SDL_MapRGB(loadedSurface->format, 0xFF, 0xFF, 0x04));
+    finalTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+    if (finalTexture == nullptr) {
+      cout << "Unable to create texture! SDL_Error: " << SDL_GetError() << endl;
+      return false;
+    } else {
+      // Get image dimensions
+      mWidth = loadedSurface->w;
+      mHeight = loadedSurface->h;
+    }
+    SDL_FreeSurface(loadedSurface);
+  }
+  mTexture = finalTexture;
+  return true;
+}
+
+void LTexture::free() {
+  if (mTexture != nullptr) {
+    SDL_DestroyTexture(mTexture);
+    mTexture = NULL;
+    mWidth = 0;
+    mHeight = 0;
+  }
+}
+
+void LTexture::render(int x, int y) {
+  SDL_Rect renderQuad = {x, y, mWidth, mHeight};
+  SDL_RenderCopy(renderer, mTexture, NULL, &renderQuad);
+}
+
+int LTexture::getWidth() { return mWidth; }
+
+int LTexture::getHeight() { return mHeight; }
+
+// Scene textures
+LTexture gFooTexture;
+LTexture gBackgroundTexture;
 
 bool init() {
   bool success = true;
@@ -74,19 +154,24 @@ SDL_Texture* loadTexture(string path) {
   return newTexture;
 }
 
-bool loadMedia(string path) {
+bool loadMedia() {
+  // Loading success flag
   bool success = true;
-  currentTexture = loadTexture(path);
-  if (currentTexture == NULL) {
-    cout << "Could not load texture hora?? " << SDL_GetError() << endl;
+
+  if (!gFooTexture.loadFromFile("assets/foo.png")) {
+    cout << "Failed to load foo" << endl;
+    success = false;
+  }
+  if (!gBackgroundTexture.loadFromFile("assets/background.png")) {
+    cout << "Failed to load backgorund" << endl;
     success = false;
   }
   return success;
 }
 
 void close() {
-  SDL_DestroyTexture(currentTexture);
-  currentTexture = NULL;
+  gFooTexture.free();
+  gBackgroundTexture.free();
 
   SDL_DestroyRenderer(renderer);
   renderer = NULL;
@@ -112,24 +197,9 @@ void keepWindowOpen() {
     SDL_SetRenderDrawColor(renderer, 0XFF, 0XFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
 
-    // Top left corner viewport
-    loadMedia("assets/spider.png");
-    SDL_Rect topLeftViewport = {0, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
-    SDL_RenderSetViewport(renderer, &topLeftViewport);
-    SDL_RenderCopy(renderer, currentTexture, NULL, NULL);
+    gBackgroundTexture.render(0, 0);
 
-    // Top right corner viewport
-    loadMedia("assets/signature.png");
-    SDL_Rect topRight = {SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2,
-                         SCREEN_HEIGHT / 2};
-    SDL_RenderSetViewport(renderer, &topRight);
-    SDL_RenderCopy(renderer, currentTexture, NULL, NULL);
-
-    // Top right corner viewport
-    loadMedia("assets/insta.jpg");
-    SDL_Rect bottom = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
-    SDL_RenderSetViewport(renderer, &bottom);
-    SDL_RenderCopy(renderer, currentTexture, NULL, NULL);
+    gFooTexture.render(240, 190);
 
     SDL_RenderPresent(renderer);
   }
@@ -140,7 +210,7 @@ int main() {
     cout << "SDL could not be initialized" << endl;
   } else {
     // Draw
-
+    loadMedia();
     keepWindowOpen();
   }
   close();
