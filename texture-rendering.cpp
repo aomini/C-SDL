@@ -41,7 +41,7 @@ bool init() {
         success = false;
       } else {
         // Initialize renderer color
-        SDL_SetRenderDrawColor(renderer, 0XFF, 0XFF, 0xFF, 0xFF);
+        SDL_SetRenderDrawColor(renderer, 0XEF, 0XB0, 0x36, 0xFF);
         // init PNG loading
         if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
           cout << "SDL image could not be initialize! SDL_image error "
