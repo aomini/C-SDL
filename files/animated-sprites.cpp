@@ -1,5 +1,4 @@
 #include <SDL.h>
-#include <SDL_blendmode.h>
 #include <SDL_image.h>
 #include <SDL_render.h>
 #include <SDL_video.h>
@@ -26,15 +25,6 @@ class LTexture {
   // Deallocate texture
   void free();
 
-  // Set color modulation
-  void setColor(Uint8 red, Uint8 green, Uint8 blue);
-
-  // Set blending
-  void setBlendMode(SDL_BlendMode blending);
-
-  // Set Alpha modulation
-  void setAlpha(Uint8 alpha);
-
   void render(int x, int y, SDL_Rect* clip = nullptr);
 
   // Get Dimension
@@ -49,8 +39,6 @@ class LTexture {
   int mWidth;
   int mHeight;
 };
-LTexture gForeTexture;
-LTexture hBackgroundTexture;
 
 LTexture::LTexture() {
   // init
@@ -100,18 +88,6 @@ void LTexture::free() {
   }
 }
 
-void LTexture::setColor(Uint8 r, Uint8 g, Uint8 b) {
-  SDL_SetTextureColorMod(mTexture, r, g, b);
-}
-
-void LTexture::setBlendMode(SDL_BlendMode blending) {
-  SDL_SetTextureBlendMode(mTexture, blending);
-}
-
-void LTexture::setAlpha(Uint8 alpha) {
-  SDL_SetTextureAlphaMod(mTexture, alpha);
-}
-
 void LTexture::render(int x, int y, SDL_Rect* clip) {
   SDL_Rect renderQuad = {x, y, mWidth, mHeight};
   if (clip != nullptr) {
@@ -124,6 +100,12 @@ void LTexture::render(int x, int y, SDL_Rect* clip) {
 int LTexture::getWidth() { return mWidth; }
 
 int LTexture::getHeight() { return mHeight; }
+
+// Walking animation
+const int WALKING_ANIMATION_FRAMES = 4;
+// Sprite scenes
+SDL_Rect gSpriteClips[WALKING_ANIMATION_FRAMES];
+LTexture gSpriteTexture;
 
 bool init() {
   bool success = true;
@@ -141,7 +123,8 @@ bool init() {
       cout << "Window couldnot be created " << SDL_GetError() << endl;
       success = false;
     } else {
-      renderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+      renderer = SDL_CreateRenderer(
+          gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
       if (renderer == NULL) {
         cout << "Renderer could not be created: SDL_Error: " << SDL_GetError()
              << endl;
@@ -184,27 +167,40 @@ bool loadMedia() {
   // Loading success flag
   bool success = true;
 
-  if (!gForeTexture.loadFromFile("assets/fadeout.png")) {
+  if (!gSpriteTexture.loadFromFile("assets/stickman-sprite.png")) {
     cout << "Failed to load sprite image" << endl;
     success = false;
   } else {
-    // Set standard alpha blending
-    gForeTexture.setBlendMode(SDL_BLENDMODE_BLEND);
-  }
+    // Top left sprite
+    gSpriteClips[0].x = 0;
+    gSpriteClips[0].y = 0;
+    gSpriteClips[0].w = 64;
+    gSpriteClips[0].h = 205;
 
-  if (!hBackgroundTexture.loadFromFile("assets/fadein.png")) {
-    cout << "Failed to load sprite image" << endl;
-    success = false;
-  } else {
-    // hBackgroundTexture.setAlpha(30);
+    // Top right sprite
+    gSpriteClips[1].x = 64;
+    gSpriteClips[1].y = 0;
+    gSpriteClips[1].w = 64;
+    gSpriteClips[1].h = 205;
+
+    // Bottom left sprite
+    gSpriteClips[2].x = 128;
+    gSpriteClips[2].y = 0;
+    gSpriteClips[2].w = 64;
+    gSpriteClips[2].h = 205;
+
+    // Bottom right sprite
+    gSpriteClips[3].x = 192;
+    gSpriteClips[3].y = 0;
+    gSpriteClips[3].w = 64;
+    gSpriteClips[3].h = 205;
   }
 
   return success;
 }
 
 void close() {
-  hBackgroundTexture.free();
-  gForeTexture.free();
+  gSpriteTexture.free();
 
   SDL_DestroyRenderer(renderer);
   renderer = NULL;
@@ -219,6 +215,10 @@ void close() {
 void keepWindowOpen() {
   SDL_Event e;
   bool quit = false;
+
+  // current animation frame
+  int frame = 0;
+
   while (!quit) {
     while (SDL_PollEvent(&e)) {
       if (e.type == SDL_QUIT) {
@@ -229,11 +229,19 @@ void keepWindowOpen() {
     // Clear Screen
     SDL_SetRenderDrawColor(renderer, 0XFF, 0XFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
-    hBackgroundTexture.render(0, 0);
 
-    gForeTexture.setAlpha(30);
-    gForeTexture.render(0, 0);
+    SDL_Rect* currentClip = &gSpriteClips[frame / 8];
+    gSpriteTexture.render((SCREEN_WIDTH - currentClip->w) / 2,
+                          (SCREEN_HEIGHT - currentClip->h) / 2, currentClip);
+
     SDL_RenderPresent(renderer);
+
+    // Go to next frame
+    ++frame;
+    // Cycle animation
+    if (frame / 8 >= WALKING_ANIMATION_FRAMES) {
+      frame = 0;
+    }
   }
 }
 
