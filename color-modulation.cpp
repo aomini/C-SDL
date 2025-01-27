@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <SDL_blendmode.h>
 #include <SDL_image.h>
 #include <SDL_render.h>
 #include <SDL_video.h>
@@ -25,6 +26,15 @@ class LTexture {
   // Deallocate texture
   void free();
 
+  // Set color modulation
+  void setColor(Uint8 red, Uint8 green, Uint8 blue);
+
+  // Set blending
+  void setBlendMode(SDL_BlendMode blending);
+
+  // Set Alpha modulation
+  void setAlpha(Uint8 alpha);
+
   void render(int x, int y, SDL_Rect* clip = nullptr);
 
   // Get Dimension
@@ -39,6 +49,8 @@ class LTexture {
   int mWidth;
   int mHeight;
 };
+LTexture gForeTexture;
+LTexture hBackgroundTexture;
 
 LTexture::LTexture() {
   // init
@@ -88,6 +100,18 @@ void LTexture::free() {
   }
 }
 
+void LTexture::setColor(Uint8 r, Uint8 g, Uint8 b) {
+  SDL_SetTextureColorMod(mTexture, r, g, b);
+}
+
+void LTexture::setBlendMode(SDL_BlendMode blending) {
+  SDL_SetTextureBlendMode(mTexture, blending);
+}
+
+void LTexture::setAlpha(Uint8 alpha) {
+  SDL_SetTextureAlphaMod(mTexture, alpha);
+}
+
 void LTexture::render(int x, int y, SDL_Rect* clip) {
   SDL_Rect renderQuad = {x, y, mWidth, mHeight};
   if (clip != nullptr) {
@@ -100,10 +124,6 @@ void LTexture::render(int x, int y, SDL_Rect* clip) {
 int LTexture::getWidth() { return mWidth; }
 
 int LTexture::getHeight() { return mHeight; }
-
-// Sprite scenes
-SDL_Rect gSpriteClips[4];
-LTexture gSpriteTexture;
 
 bool init() {
   bool success = true;
@@ -164,40 +184,27 @@ bool loadMedia() {
   // Loading success flag
   bool success = true;
 
-  if (!gSpriteTexture.loadFromFile("assets/sprites.png")) {
+  if (!gForeTexture.loadFromFile("assets/fadeout.png")) {
     cout << "Failed to load sprite image" << endl;
     success = false;
   } else {
-    // Top left sprite
-    gSpriteClips[0].x = 0;
-    gSpriteClips[0].y = 0;
-    gSpriteClips[0].w = 100;
-    gSpriteClips[0].h = 100;
+    // Set standard alpha blending
+    gForeTexture.setBlendMode(SDL_BLENDMODE_BLEND);
+  }
 
-    // Top right sprite
-    gSpriteClips[1].x = 100;
-    gSpriteClips[1].y = 0;
-    gSpriteClips[1].w = 100;
-    gSpriteClips[1].h = 100;
-
-    // Bottom left sprite
-    gSpriteClips[2].x = 0;
-    gSpriteClips[2].y = 100;
-    gSpriteClips[2].w = 100;
-    gSpriteClips[2].h = 100;
-
-    // Bottom right sprite
-    gSpriteClips[3].x = 100;
-    gSpriteClips[3].y = 100;
-    gSpriteClips[3].w = 100;
-    gSpriteClips[3].h = 100;
+  if (!hBackgroundTexture.loadFromFile("assets/fadein.png")) {
+    cout << "Failed to load sprite image" << endl;
+    success = false;
+  } else {
+    // hBackgroundTexture.setAlpha(30);
   }
 
   return success;
 }
 
 void close() {
-  gSpriteTexture.free();
+  hBackgroundTexture.free();
+  gForeTexture.free();
 
   SDL_DestroyRenderer(renderer);
   renderer = NULL;
@@ -222,22 +229,10 @@ void keepWindowOpen() {
     // Clear Screen
     SDL_SetRenderDrawColor(renderer, 0XFF, 0XFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
+    hBackgroundTexture.render(0, 0);
 
-    // Render top left sprite
-    gSpriteTexture.render(0, 0, &gSpriteClips[0]);
-
-    // Render top right sprite
-    gSpriteTexture.render(SCREEN_WIDTH - gSpriteClips[1].w, 0,
-                          &gSpriteClips[1]);
-
-    // Render bottom left sprite
-    gSpriteTexture.render(0, SCREEN_HEIGHT - gSpriteClips[2].h,
-                          &gSpriteClips[2]);
-
-    // Render bottom right sprite
-    gSpriteTexture.render(SCREEN_WIDTH - gSpriteClips[3].w,
-                          SCREEN_HEIGHT - gSpriteClips[3].h, &gSpriteClips[3]);
-
+    gForeTexture.setAlpha(30);
+    gForeTexture.render(0, 0);
     SDL_RenderPresent(renderer);
   }
 }
