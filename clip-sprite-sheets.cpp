@@ -25,7 +25,7 @@ class LTexture {
   // Deallocate texture
   void free();
 
-  void render(int x, int y);
+  void render(int x, int y, SDL_Rect* clip = nullptr);
 
   // Get Dimension
   int getWidth();
@@ -88,18 +88,22 @@ void LTexture::free() {
   }
 }
 
-void LTexture::render(int x, int y) {
+void LTexture::render(int x, int y, SDL_Rect* clip) {
   SDL_Rect renderQuad = {x, y, mWidth, mHeight};
-  SDL_RenderCopy(renderer, mTexture, NULL, &renderQuad);
+  if (clip != nullptr) {
+    renderQuad.w = clip->w;
+    renderQuad.h = clip->h;
+  }
+  SDL_RenderCopy(renderer, mTexture, clip, &renderQuad);
 }
 
 int LTexture::getWidth() { return mWidth; }
 
 int LTexture::getHeight() { return mHeight; }
 
-// Scene textures
-LTexture gFooTexture;
-LTexture gBackgroundTexture;
+// Sprite scenes
+SDL_Rect gSpriteClips[4];
+LTexture gSpriteTexture;
 
 bool init() {
   bool success = true;
@@ -160,20 +164,40 @@ bool loadMedia() {
   // Loading success flag
   bool success = true;
 
-  if (!gFooTexture.loadFromFile("assets/foo.png")) {
-    cout << "Failed to load foo" << endl;
+  if (!gSpriteTexture.loadFromFile("assets/sprites.png")) {
+    cout << "Failed to load sprite image" << endl;
     success = false;
+  } else {
+    // Top left sprite
+    gSpriteClips[0].x = 0;
+    gSpriteClips[0].y = 0;
+    gSpriteClips[0].w = 100;
+    gSpriteClips[0].h = 100;
+
+    // Top right sprite
+    gSpriteClips[1].x = 100;
+    gSpriteClips[1].y = 0;
+    gSpriteClips[1].w = 100;
+    gSpriteClips[1].h = 100;
+
+    // Bottom left sprite
+    gSpriteClips[2].x = 0;
+    gSpriteClips[2].y = 100;
+    gSpriteClips[2].w = 100;
+    gSpriteClips[2].h = 100;
+
+    // Bottom right sprite
+    gSpriteClips[3].x = 100;
+    gSpriteClips[3].y = 100;
+    gSpriteClips[3].w = 100;
+    gSpriteClips[3].h = 100;
   }
-  if (!gBackgroundTexture.loadFromFile("assets/background.png")) {
-    cout << "Failed to load backgorund" << endl;
-    success = false;
-  }
+
   return success;
 }
 
 void close() {
-  gFooTexture.free();
-  gBackgroundTexture.free();
+  gSpriteTexture.free();
 
   SDL_DestroyRenderer(renderer);
   renderer = NULL;
@@ -199,9 +223,20 @@ void keepWindowOpen() {
     SDL_SetRenderDrawColor(renderer, 0XFF, 0XFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
 
-    gBackgroundTexture.render(0, 0);
+    // Render top left sprite
+    gSpriteTexture.render(0, 0, &gSpriteClips[0]);
 
-    gFooTexture.render(240, 190);
+    // Render top right sprite
+    gSpriteTexture.render(SCREEN_WIDTH - gSpriteClips[1].w, 0,
+                          &gSpriteClips[1]);
+
+    // Render bottom left sprite
+    gSpriteTexture.render(0, SCREEN_HEIGHT - gSpriteClips[2].h,
+                          &gSpriteClips[2]);
+
+    // Render bottom right sprite
+    gSpriteTexture.render(SCREEN_WIDTH - gSpriteClips[3].w,
+                          SCREEN_HEIGHT - gSpriteClips[3].h, &gSpriteClips[3]);
 
     SDL_RenderPresent(renderer);
   }

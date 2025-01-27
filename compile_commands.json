@@ -1,8 +1,8 @@
 [
 {
   "directory": "/Users/reyshrestha/projects/sdl-projects",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/opt/homebrew/Cellar/sdl2/2.30.11/include -isystem /opt/homebrew/Cellar/sdl2/2.30.11/include/SDL2 -isystem /opt/homebrew/Cellar/sdl2_image/2.8.4/include/SDL2 -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/sdlProject.dir/color-typing.cpp.o -c /Users/reyshrestha/projects/sdl-projects/color-typing.cpp",
-  "file": "/Users/reyshrestha/projects/sdl-projects/color-typing.cpp",
-  "output": "CMakeFiles/sdlProject.dir/color-typing.cpp.o"
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/opt/homebrew/Cellar/sdl2/2.30.11/include -isystem /opt/homebrew/Cellar/sdl2/2.30.11/include/SDL2 -isystem /opt/homebrew/Cellar/sdl2_image/2.8.4/include/SDL2 -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/sdlProject.dir/clip-sprite-sheets.cpp.o -c /Users/reyshrestha/projects/sdl-projects/clip-sprite-sheets.cpp",
+  "file": "/Users/reyshrestha/projects/sdl-projects/clip-sprite-sheets.cpp",
+  "output": "CMakeFiles/sdlProject.dir/clip-sprite-sheets.cpp.o"
 }
 ]
