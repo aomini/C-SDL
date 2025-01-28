@@ -103,9 +103,13 @@ int LTexture::getHeight() { return mHeight; }
 
 // Walking animation
 const int WALKING_ANIMATION_FRAMES = 4;
+const int JUMP_ANIMATION_FRAMES = 5;
 // Sprite scenes
 SDL_Rect gSpriteClips[WALKING_ANIMATION_FRAMES];
+SDL_Rect gJumpClips[JUMP_ANIMATION_FRAMES];
+
 LTexture gSpriteTexture;
+LTexture gbackground;
 
 bool init() {
   bool success = true;
@@ -194,6 +198,40 @@ bool loadMedia() {
     gSpriteClips[3].y = 270;
     gSpriteClips[3].w = 50;
     gSpriteClips[3].h = 60;
+
+    // JUMPING SPRITES
+    gJumpClips[0].x = 19;
+    gJumpClips[0].y = 429;
+    gJumpClips[0].w = 45;
+    gJumpClips[0].h = 63;
+
+    gJumpClips[1].x = 64;
+    gJumpClips[1].y = 429;
+    gJumpClips[1].w = 48;
+    gJumpClips[1].h = 63;
+
+    gJumpClips[2].x = 112;
+    gJumpClips[2].y = 429;
+    gJumpClips[2].w = 49;
+    gJumpClips[2].h = 63;
+
+    gJumpClips[3].x = 161;
+    gJumpClips[3].y = 429;
+    gJumpClips[3].w = 48;
+    gJumpClips[3].h = 63;
+
+    gJumpClips[4].x = 209;
+    gJumpClips[4].y = 429;
+    gJumpClips[4].w = 51;
+    gJumpClips[4].h = 63;
+  }
+
+  // Jump character
+
+  // bg
+  if (!gbackground.loadFromFile("assets/konoha.jpg")) {
+    cout << "Failed to load background" << endl;
+    success = false;
   }
 
   return success;
@@ -216,33 +254,73 @@ void keepWindowOpen() {
   SDL_Event e;
   bool quit = false;
 
-  // current animation frame
+  // Current animation frame
   int frame = 0;
+
+  // Frame delay control
+  float frameDelay = 18;  // Delay in frames before switching to the next sprite
+  int frameCount = 0;     // Counts frames to apply the delay
+
+  // Jump parameters
+  int baseY = (SCREEN_HEIGHT - gJumpClips[0].h) / 2;  // Ground position
+  int posY = baseY;                                   // Current Y position
+  float velocityY = -5.0f;  // Initial jump velocity (upward)
+  float gravity = 0.2f;     // Gravity acceleration
+  bool jumping = false;
 
   while (!quit) {
     while (SDL_PollEvent(&e)) {
       if (e.type == SDL_QUIT) {
         quit = true;
       }
+
+      // Start the jump when pressing space
+      if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_SPACE && !jumping) {
+        jumping = true;
+        velocityY = -5.0f;  // Reset jump velocity
+      }
     }
 
     // Clear Screen
-    // SDL_Set
-    SDL_SetRenderDrawColor(renderer, 0X31, 0X33, 0x40, 0xFF);
+    SDL_SetRenderDrawColor(renderer, 0x31, 0x33, 0x40, 0xFF);
     SDL_RenderClear(renderer);
 
-    SDL_Rect* currentClip = &gSpriteClips[frame / 12];
-    gSpriteTexture.render((SCREEN_WIDTH - currentClip->w) / 2,
-                          (SCREEN_HEIGHT - currentClip->h) / 2, currentClip);
+    // Render the background
+    SDL_Rect backgroundClip = {0, 200, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
+    gbackground.render(0, 0, &backgroundClip);
+
+    // Jump animation and vertical movement
+    if (jumping) {
+      posY += velocityY;     // Update position based on velocity
+      velocityY += gravity;  // Apply gravity
+
+      // If character lands back on the ground, stop the jump
+      if (posY >= baseY) {
+        posY = baseY;  // Reset position to ground
+        jumping = false;
+        velocityY = 0;   // Reset velocity
+        frame = 0;       // Reset animation frame
+        frameCount = 0;  // Reset frame delay
+      }
+    }
+
+    // Apply frame delay to slow down animation
+    if (frameCount >= frameDelay) {
+      ++frame;         // Move to the next animation frame
+      frameCount = 0;  // Reset frame count
+    } else {
+      ++frameCount;  // Increment frame count
+    }
+
+    // Select the current sprite frame
+    SDL_Rect* jumpClip =
+        &gJumpClips[frame % JUMP_ANIMATION_FRAMES];  // Loop frames
+    gSpriteTexture.render((SCREEN_WIDTH - jumpClip->w) / 2, posY, jumpClip);
 
     SDL_RenderPresent(renderer);
 
-    // Go to next frame
-    ++frame;
-    // Cycle animation
-    if (frame / 12 >= WALKING_ANIMATION_FRAMES) {
-      frame = 0;
-    }
+    // Delay to control frame rate
+    SDL_Delay(16);  // ~60 FPS
   }
 }
 
