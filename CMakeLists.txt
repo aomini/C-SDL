@@ -18,7 +18,8 @@ include_directories(${SDL2_INCLUDE_DIRS})
 
 # Add source files
 #file(GLOB SOURCES "src/*.cpp")
-file(GLOB SOURCES "*.cpp")
+file(GLOB SOURCES "*.cpp" "src/*.cpp")
+message(STATUS "source files: ${SOURCES}")
 
 # Create executable
 add_executable(${PROJECT_NAME} ${SOURCES})
