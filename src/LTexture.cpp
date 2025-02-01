@@ -28,7 +28,9 @@ class LTexture {
   // Set Alpha modulation
   void setAlpha(Uint8 alpha);
 
-  void render(int x, int y, SDL_Rect* clip = nullptr);
+  void render(int x, int y, SDL_Rect* clip = nullptr, bool renderEx = false,
+              double angle = 0.0, SDL_Point* center = nullptr,
+              SDL_RendererFlip flip = SDL_FLIP_NONE);
 
   // Get Dimension
   int getWidth();
@@ -108,13 +110,18 @@ void LTexture::setAlpha(Uint8 alpha) {
   SDL_SetTextureAlphaMod(mTexture, alpha);
 }
 
-void LTexture::render(int x, int y, SDL_Rect* clip) {
+void LTexture::render(int x, int y, SDL_Rect* clip, bool renderEx, double angle,
+                      SDL_Point* center, SDL_RendererFlip flip) {
   SDL_Rect renderQuad = {x, y, mWidth, mHeight};
   if (clip != nullptr) {
     renderQuad.w = clip->w;
     renderQuad.h = clip->h;
   }
-  SDL_RenderCopy(mrenderer, mTexture, clip, &renderQuad);
+  if (renderEx) {
+    SDL_RenderCopyEx(mrenderer, mTexture, clip, &renderQuad, angle, center,
+                     flip);
+  } else
+    SDL_RenderCopy(mrenderer, mTexture, clip, &renderQuad);
 }
 
 int LTexture::getWidth() { return mWidth; }

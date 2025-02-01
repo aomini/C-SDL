@@ -29,7 +29,9 @@ class LTexture {
   // Set Alpha modulation
   void setAlpha(Uint8 alpha);
 
-  void render(int x, int y, SDL_Rect* clip = nullptr);
+  void render(int x, int y, SDL_Rect* clip = nullptr, bool renderEx = false,
+              double angle = 0.0, SDL_Point* center = nullptr,
+              SDL_RendererFlip flip = SDL_FLIP_NONE);
 
   // Get Dimension
   int getWidth();
