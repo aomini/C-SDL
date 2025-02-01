@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/Users/reyshrestha/projects/sdl-projects/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/reyshrestha/projects/sdl-projects/vendored/SDL2_ttf-2.24.0 -isystem /opt/homebrew/Cellar/sdl2/2.30.11/include/SDL2 -isystem /opt/homebrew/Cellar/sdl2_image/2.8.4/include/SDL2 -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/sdlProject.dir/main.cpp.o -c /Users/reyshrestha/projects/sdl-projects/main.cpp",
+  "file": "/Users/reyshrestha/projects/sdl-projects/main.cpp",
+  "output": "CMakeFiles/sdlProject.dir/main.cpp.o"
+},
+{
+  "directory": "/Users/reyshrestha/projects/sdl-projects/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/reyshrestha/projects/sdl-projects/vendored/SDL2_ttf-2.24.0 -isystem /opt/homebrew/Cellar/sdl2/2.30.11/include/SDL2 -isystem /opt/homebrew/Cellar/sdl2_image/2.8.4/include/SDL2 -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/sdlProject.dir/src/LTexture.cpp.o -c /Users/reyshrestha/projects/sdl-projects/src/LTexture.cpp",
+  "file": "/Users/reyshrestha/projects/sdl-projects/src/LTexture.cpp",
+  "output": "CMakeFiles/sdlProject.dir/src/LTexture.cpp.o"
+}
+]

@@ -7,3 +7,11 @@
 ```
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
 ```
+
+# - Dependencies Installation
+
+1. Navigate to build directory
+2. Create a directory SDL2_ttf, reference `CMakeLists.txt`
+3. Run `cmake ../../vendored/SDL_ttf`
+4. Run `make`
+5. Optionallym Run `make install` to install globally
